@@ -1,7 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 import json
-from utils import score_gad7
+from Utils import score_gad7
 
 # Load Persian GAD-7 test
 with open("Tests/gad7.json", "r", encoding="utf-8") as f:

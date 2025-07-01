@@ -1,0 +1,23 @@
+def process_user_input(user_input, session_state, ask_gpt):
+    if session_state.step == "start":
+        reply = ask_gpt("کاربر احساس خود را بیان کرده. حالا درباره علائمش سؤال کن.", session_state.chat_history)
+        session_state.step = "symptom_check"
+
+    elif session_state.step == "symptom_check":
+        if any(word in user_input for word in ["دل‌درد", "لرزش", "بی‌قراری", "تپش قلب"]):
+            reply = "ممکنه نشونه‌هایی از اضطراب باشه. دوست داری یک تست علمی کوتاه انجام بدیم؟"
+            session_state.step = "test_offer"
+        else:
+            reply = ask_gpt("از کاربر درباره علائمش بیشتر بپرس.", session_state.chat_history)
+
+    elif session_state.step == "test_offer":
+        if any(word in user_input for word in ["بله", "باشه", "اوکی"]):
+            session_state.step = "test_active"
+            reply = "بسیار خب، تست اضطراب GAD-7 را شروع می‌کنیم."
+        else:
+            reply = "باشه. اگر نظرت عوض شد، می‌تونی هر زمان بگی تا تست رو انجام بدیم."
+
+    else:
+        reply = ask_gpt(user_input, session_state.chat_history)
+
+    return reply

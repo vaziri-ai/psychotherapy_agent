@@ -45,7 +45,7 @@ if user_input:
     st.session_state.chat_history.append({"role": "user", "content": user_input})
     gpt_reply = ask_gpt(user_input, st.session_state.chat_history)
     st.session_state.chat_history.append({"role": "assistant", "content": gpt_reply})
-    st.experimental_rerun()  # ✅ Clears input and updates chat
+    st.rerun()  # ✅ Clears input and updates chat
 
 
     # Trigger test if relevant

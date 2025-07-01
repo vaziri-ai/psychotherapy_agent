@@ -1,17 +1,3 @@
-def score_gad7(responses):
-    total = sum(responses)
-    if total >= 10:
-        level = "شدید"
-        recommendation = "سطح اضطراب شما بالاست. توصیه می‌شود با روانپزشک صحبت کنید."
-    elif total >= 6:
-        level = "متوسط"
-        recommendation = "مقداری اضطراب دارید. مشاوره با روان‌درمانگر می‌تواند مفید باشد."
-    else:
-        level = "خفیف"
-        recommendation = "سطح اضطراب پایین است. مراقبت‌های خودیاری پیشنهاد می‌شود."
-    return total, level, recommendation
-
-
 def score_adhd(responses):
     total = sum(responses)
     if total >= 9:

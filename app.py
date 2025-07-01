@@ -39,7 +39,7 @@ user_input = st.text_input("")
 
 if user_input:
     st.session_state.chat_history.append({"role": "user", "content": user_input})
-    gpt_reply = ask_gpt4.1(user_input, st.session_state.chat_history)
+    gpt_reply = ask_gpt(user_input, st.session_state.chat_history)
     st.session_state.chat_history.append({"role": "assistant", "content": gpt_reply})
 
     st.markdown(f"🤖 روان‌یار: {gpt_reply}")

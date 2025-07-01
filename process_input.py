@@ -1,12 +1,10 @@
-from Conditions import Anxiety, ADHD, OCD  # import all condition modules
+from Conditions import Anxiety, ADHD, OCD
 
 def process_user_input(user_input, step, chat_history):
-    """Analyze user input and route to correct condition logic."""
-    
     if step == "start":
         reply, new_step = Anxiety.start_screening(chat_history)
-        return reply, new_step, None  # always return 3 values
-    
+        return reply, new_step, None  # always 3 values
+
     anxiety_keywords = ["اضطراب", "بی‌قراری", "تپش قلب", "دل‌درد", "لرزش"]
     adhd_keywords = ["تمرکز", "پرتی حواس", "فراموشی", "بی‌نظمی", "بی‌توجهی"]
     ocd_keywords = ["وسواس", "شستن دست", "تکرار", "دقت زیاد"]
@@ -23,5 +21,5 @@ def process_user_input(user_input, step, chat_history):
         reply, new_step = OCD.handle_input(user_input, chat_history)
         return reply, new_step, "ocd"
 
-    # If no keyword matches, fallback to GPT in app.py
+    # fallback to GPT
     return None, step, None

@@ -1,25 +1,17 @@
-from Conditions import Anxiety, ADHD, OCD
+from Conditions import Anxiety
 
 def process_user_input(user_input, step, chat_history):
+    """Analyze user input and route to correct condition logic."""
     if step == "start":
-        reply, new_step = Anxiety.start_screening(chat_history)
-        return reply, new_step, None  # always 3 values
+        return anxiety.start_screening(chat_history)
+    
+    if "اضطراب" in user_input or any(word in user_input for word in ["بی‌قراری", "تپش قلب", "دل‌درد"]):
+        return anxiety.handle_input(user_input, chat_history)
 
-    anxiety_keywords = ["اضطراب", "بی‌قراری", "تپش قلب", "دل‌درد", "لرزش"]
-    adhd_keywords = ["تمرکز", "پرتی حواس", "فراموشی", "بی‌نظمی", "بی‌توجهی"]
-    ocd_keywords = ["وسواس", "شستن دست", "تکرار", "دقت زیاد"]
+    elif "تمرکز" in user_input or "حواس‌پرتی" in user_input:
+        return adhd.handle_input(user_input, chat_history)
 
-    if any(word in user_input for word in anxiety_keywords):
-        reply, new_step = Anxiety.handle_input(user_input, chat_history)
-        return reply, new_step, "gad7"
+    elif "وسواس" in user_input or "شستن دست" in user_input:
+        return ocd.handle_input(user_input, chat_history)
 
-    elif any(word in user_input for word in adhd_keywords):
-        reply, new_step = ADHD.handle_input(user_input, chat_history)
-        return reply, new_step, "adhd"
-
-    elif any(word in user_input for word in ocd_keywords):
-        reply, new_step = OCD.handle_input(user_input, chat_history)
-        return reply, new_step, "ocd"
-
-    # fallback to GPT
-    return None, step, None
+    return None, step

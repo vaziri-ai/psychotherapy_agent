@@ -20,8 +20,6 @@ if "step" not in st.session_state:
     st.session_state.step = "start"
 if "just_sent" not in st.session_state:
     st.session_state.just_sent = False
-if "test_type" not in st.session_state:
-    st.session_state.test_type = None
 
 # --- Show Chat History (Skip system) ---
 for msg in st.session_state.chat_history[1:]:
@@ -36,9 +34,9 @@ if user_input and not st.session_state.just_sent:
     st.chat_message("user").markdown(user_input)
     st.session_state.chat_history.append({"role": "user", "content": user_input})
 
-    reply, new_step, new_test_type = process_user_input(user_input, st.session_state.step, st.session_state.chat_history)
+    reply, new_step = process_user_input(user_input, st.session_state.step, st.session_state.chat_history)
 
-    # Fallback to GPT if no specific reply
+    # Fallback to GPT if no specific match
     if reply is None:
         response = client.chat.completions.create(
             model="gpt-4",
@@ -48,13 +46,7 @@ if user_input and not st.session_state.just_sent:
 
     st.chat_message("assistant").markdown(reply)
     st.session_state.chat_history.append({"role": "assistant", "content": reply})
-
-    # Update step and test_type if provided
-    if new_step:
-        st.session_state.step = new_step
-    if new_test_type:
-        st.session_state.test_type = new_test_type
-
+    st.session_state.step = new_step or st.session_state.step
     st.session_state.just_sent = True
     st.rerun()
 
@@ -62,14 +54,15 @@ if user_input and not st.session_state.just_sent:
 if st.session_state.just_sent:
     st.session_state.just_sent = False
 
-# --- Render condition-specific tests ---
-if st.session_state.step == "test_active":
-    if st.session_state.test_type == "gad7":
-        from conditions.anxiety import run_test as run_gad7_test
-        run_gad7_test()
-    elif st.session_state.test_type == "adhd":
-        from conditions.adhd import run_test as run_adhd_test
-        run_adhd_test()
-    elif st.session_state.test_type == "ocd":
-        from conditions.ocd import run_test as run_ocd_test
-        run_ocd_test()
+# --- Optional: Run condition-specific test interface if needed ---
+if st.session_state.step == "test_active_anxiety":
+    from conditions.anxiety import run_test
+    run_test()
+
+elif st.session_state.step == "test_active_adhd":
+    from conditions.adhd import run_test
+    run_test()
+
+elif st.session_state.step == "test_active_ocd":
+    from conditions.ocd import run_test
+    run_test()

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import streamlit as st
-st.set_page_config(page_title="Test App", layout="centered")
+st.set_page_config(page_title="اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی", layout="centered")
 from openai import OpenAI
 import json
 from Utils.score_gad7 import score_gad7
@@ -13,7 +13,7 @@ with open("Tests/gad7.json", "r", encoding="utf-8") as f:
 # --- Setup OpenAI ---
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-st.title("🧠 روان‌یار - همراه روانی شما با GPT-4")
+st.title("اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی")
 
 # Initialize session state
 if "chat_history" not in st.session_state:
@@ -54,7 +54,7 @@ for msg in st.session_state.chat_history:
 st.markdown("---")
 
 # Input box
-user_input = st.text_input("شکاستت رو بنویس، امروز چه حالی داری؟", key="chat_input")
+user_input = st.text_input("شکایتت رو بنویس، امروز چه حالی داری؟", key="chat_input")
 
 if st.session_state.get("step") != "test_active":
 # Step-based interaction

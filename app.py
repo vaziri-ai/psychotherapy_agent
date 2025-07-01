@@ -20,7 +20,7 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
 # Function to ask GPT-4 a question
-def ask_gpt4(prompt, chat_history):
+def ask_gpt4.1(prompt, chat_history):
     messages = [{"role": "system", "content": "تو یک دستیار روانشناختی مهربان و فارسی‌زبان هستی. به کاربر کمک می‌کنی احساساتش را بیان کند، اگر لازم باشد پیشنهاد می‌کنی تست روانشناسی بدهد، و پاسخ‌ها را با همدلی می‌پذیری."}]
     for msg in chat_history:
         messages.append(msg)
@@ -39,7 +39,7 @@ user_input = st.text_input("")
 
 if user_input:
     st.session_state.chat_history.append({"role": "user", "content": user_input})
-    gpt_reply = ask_gpt4(user_input, st.session_state.chat_history)
+    gpt_reply = ask_gpt4.1(user_input, st.session_state.chat_history)
     st.session_state.chat_history.append({"role": "assistant", "content": gpt_reply})
 
     st.markdown(f"🤖 روان‌یار: {gpt_reply}")

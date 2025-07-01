@@ -10,8 +10,8 @@ with open("Tests/gad7.json", "r", encoding="utf-8") as f:
 # --- Setup OpenAI ---
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-st.set_page_config(page_title="روان‌یار مرحله‌ای", layout="centered")
-st.title("🧠 روان‌یار - همراه روانی مرحله‌به‌مرحله")
+st.set_page_config(page_title="اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی", layout="right")
+st.title("اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی")
 
 # Initialize session state
 if "chat_history" not in st.session_state:
@@ -44,15 +44,15 @@ def ask_gpt(prompt, chat_history):
 # Display chat history
 for msg in st.session_state.chat_history:
     if msg["role"] == "user":
-        st.markdown(f"👤 تو: {msg['content']}")
+        st.markdown(f" تو: {msg['content']}")
     elif msg["role"] == "assistant":
-        st.markdown(f"🤖 روان‌یار: {msg['content']}")
+        st.markdown(f"هوش مصنوعی روانشناسی: {msg['content']}")
 
 # Divider
 st.markdown("---")
 
 # Input box
-user_input = st.text_input("✍️ پیامت رو بنویس:", key="chat_input")
+user_input = st.text_input("شکاستت رو بنویس، امروز چه حالی داری؟", key="chat_input")
 
 if st.session_state.get("step") != "test_active":
 # Step-based interaction

@@ -1,29 +1,29 @@
 # -*- coding: utf-8 -*-
-
 import streamlit as st
-st.set_page_config(page_title="اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی", layout="centered")
-from openai import OpenAI
 import json
+from openai import OpenAI
 from Utils.score_gad7 import score_gad7
 
-# Load Persian GAD-7 test
+# --- Page Setup ---
+st.set_page_config(page_title="اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی", layout="centered")
+st.title("🧠 روان‌یار - همراه روانی شما با GPT-4")
+st.markdown("از من هر سؤالی درباره وضعیت روانی، اضطراب یا علائم بپرس!")
+
+# --- Load Test ---
 with open("Tests/gad7.json", "r", encoding="utf-8") as f:
     gad7 = json.load(f)
 
 # --- Setup OpenAI ---
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-st.title("اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی")
-
-# Initialize session state
+# --- Session State Init ---
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
+
 if "step" not in st.session_state:
     st.session_state.step = "start"
-if "symptom_check_done" not in st.session_state:
-    st.session_state.symptom_check_done = False
 
-# Function to ask GPT-4 with custom system prompt
+# --- System Prompt ---
 SYSTEM_PROMPT = (
     "تو یک دستیار روان‌شناسی فارسی‌زبان هستی که مکالمه را به شکل مرحله‌ای هدایت می‌کنی. "
     "در ابتدا از احساس کلی کاربر بپرس، سپس با سؤالات هدفمند علائم را بررسی کن، "
@@ -31,75 +31,59 @@ SYSTEM_PROMPT = (
     "در هر مرحله فقط یک سؤال بپرس. سعی کن فقط در حد ۵ جمله یا ۲ پاراگراف پاسخ بدهی، مگر اینکه کاربر صریحاً درخواست توضیح بیشتر کند."
 )
 
+# --- GPT Ask Function ---
 def ask_gpt(prompt, chat_history):
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-    for msg in chat_history:
-        messages.append(msg)
-    messages.append({"role": "user", "content": prompt})
-
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}] + chat_history + [{"role": "user", "content": prompt}]
     response = client.chat.completions.create(
         model="gpt-4.1",
         messages=messages,
     )
     return response.choices[0].message.content
 
-# Display chat history
+# --- Display Chat History ---
 for msg in st.session_state.chat_history:
-    if msg["role"] == "user":
-        st.markdown(f" تو: {msg['content']}")
-    elif msg["role"] == "assistant":
-        st.markdown(f"هوش مصنوعی روانشناسی: {msg['content']}")
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
 
+# --- Chat Input ---
+user_input = st.chat_input("پیامت رو اینجا بنویس...")
 
-# Divider
-st.markdown("---")
+if user_input and st.session_state.step != "test_active":
+    # Show user message
+    st.session_state.chat_history.append({"role": "user", "content": user_input})
+    with st.chat_message("user"):
+        st.markdown(user_input)
 
-# Input box
-user_input = st.text_input(
-    label="شکایتت رو بنویس، امروز چه حالی داری؟",
-    key="chat_input",
-    label_visibility="collapsed",
-    placeholder="پیامت رو اینجا بنویس...",
-)
+    # Step-based logic
+    if st.session_state.step == "start":
+        reply = ask_gpt("کاربر احساس خود را بیان کرده. حالا درباره علائمش سؤال کن.", st.session_state.chat_history)
+        st.session_state.step = "symptom_check"
 
-if st.session_state.get("step") != "test_active":
-# Step-based interaction
-    if user_input and "just_sent" not in st.session_state:
-        st.session_state.chat_history.append({"role": "user", "content": user_input})
-    
-        if st.session_state.step == "start":
-            reply = ask_gpt("کاربر احساس خود را بیان کرده. حالا درباره علائمش سؤال کن.", st.session_state.chat_history)
-            st.session_state.step = "symptom_check"
-    
-        elif st.session_state.step == "symptom_check":
-            if any(word in user_input for word in ["دل‌درد", "لرزش", "بی‌قراری", "تپش قلب"]):
-                reply = "ممکنه نشونه‌هایی از اضطراب باشه. دوست داری یک تست علمی کوتاه انجام بدیم؟"
-                st.session_state.step = "test_offer"
-            else:
-                reply = ask_gpt("از کاربر درباره علائمش بیشتر بپرس.", st.session_state.chat_history)
-    
-        elif st.session_state.step == "test_offer":
-            if any(word in user_input for word in ["بله", "باشه", "اوکی"]):
-                st.session_state.step = "test_active"
-                reply = "بسیار خب، تست اضطراب GAD-7 را شروع می‌کنیم."
-            else:
-                reply = "باشه. اگر نظرت عوض شد، می‌تونی هر زمان بگی تا تست رو انجام بدیم."
-    
+    elif st.session_state.step == "symptom_check":
+        if any(word in user_input for word in ["دل‌درد", "لرزش", "بی‌قراری", "تپش قلب"]):
+            reply = "ممکنه نشونه‌هایی از اضطراب باشه. دوست داری یک تست علمی کوتاه انجام بدیم؟"
+            st.session_state.step = "test_offer"
         else:
-            reply = ask_gpt(user_input, st.session_state.chat_history)
-    
-        st.session_state.chat_history.append({"role": "assistant", "content": reply})
-        st.session_state.last_gpt_reply = reply
-        st.session_state.just_sent = True
-        st.rerun()
+            reply = ask_gpt("از کاربر درباره علائمش بیشتر بپرس.", st.session_state.chat_history)
 
-# Reset flag
-if "just_sent" in st.session_state:
-    del st.session_state["just_sent"]
+    elif st.session_state.step == "test_offer":
+        if any(word in user_input for word in ["بله", "باشه", "اوکی"]):
+            st.session_state.step = "test_active"
+            reply = "بسیار خب، تست اضطراب GAD-7 را شروع می‌کنیم."
+        else:
+            reply = "باشه. اگر نظرت عوض شد، می‌تونی هر زمان بگی تا تست رو انجام بدیم."
 
-# Show test if active
-if st.session_state.get("step") == "test_active":
-    st.markdown("### تست اضطراب GAD-7")
+    else:
+        reply = ask_gpt(user_input, st.session_state.chat_history)
+
+    # Show assistant reply
+    st.session_state.chat_history.append({"role": "assistant", "content": reply})
+    with st.chat_message("assistant"):
+        st.markdown(reply)
+
+# --- GAD-7 Test ---
+if st.session_state.step == "test_active":
+    st.markdown("### 🧪 تست اضطراب GAD-7")
     responses = []
 
     with st.form("test_form"):
@@ -115,5 +99,4 @@ if st.session_state.get("step") == "test_active":
         st.success(f"نمرهٔ کلی شما: {total} از ۲۱")
         st.info(f"سطح اضطراب: {level}")
         st.warning(recommendation)
-
         st.session_state.step = "post_test"

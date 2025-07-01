@@ -44,6 +44,28 @@ if user_input:
 
     st.markdown(f"🤖 روان‌یار: {gpt_reply}")
 
+    # Show chat history (bottom-up)
+for msg in st.session_state.chat_history:
+    if msg["role"] == "user":
+        st.markdown(f"👤 تو: {msg['content']}")
+    elif msg["role"] == "assistant":
+        st.markdown(f"🤖 روان‌یار: {msg['content']}")
+
+# Spacer for scrolling layout
+st.markdown("---")
+
+# Input box at the bottom
+user_input = st.text_input("✍️ پیامت رو بنویس:", key="user_input")
+
+if user_input:
+    st.session_state.chat_history.append({"role": "user", "content": user_input})
+    gpt_reply = ask_gpt(user_input, st.session_state.chat_history)
+    st.session_state.chat_history.append({"role": "assistant", "content": gpt_reply})
+
+    # Clear the input field (optional)
+    st.session_state.user_input = ""
+
+    
     # Simple check to trigger test manually
     if any(word in gpt_reply for word in ["تست اضطراب", "تست روانشناسی", "آیا می‌خواهی تست بدهی؟"]):
         st.markdown("### تست اضطراب GAD-7")

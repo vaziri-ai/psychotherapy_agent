@@ -41,8 +41,6 @@ st.markdown("---")
 # Input box at bottom
 user_input = st.text_input("✍️ پیامت رو بنویس:", key="user_input")
 
-user_input = st.text_input("✍️ پیامت رو بنویس:", key="user_input")
-
 # Only trigger once per input
 if user_input and "just_sent" not in st.session_state:
     st.session_state.chat_history.append({"role": "user", "content": user_input})

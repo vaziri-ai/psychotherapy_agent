@@ -1,14 +1,10 @@
 import streamlit as st
 from openai import OpenAI
-import streamlit.components.v1 as components
-import urllib.parse
 import json
-
 
 # Load Persian GAD-7 test
 with open("Tests/gad7.json", "r", encoding="utf-8") as f:
     gad7 = json.load(f)
-
 
 # --- Setup OpenAI ---
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
@@ -21,7 +17,7 @@ if "chat_history" not in st.session_state:
 
 # Function to ask GPT-4 a question
 def ask_gpt(prompt, chat_history):
-    messages = [{"role": "system", "content": "تو یک دستیار روانشناختی مهربان و فارسی‌زبان هستی. به کاربر کمک می‌کنی احساساتش را بیان کند، اگر لازم باشد پیشنهاد می‌کنی تست روانشناسی بدهد، و پاسخ‌ها را با همدلی می‌پذیری."}]
+    messages = [{"role": "system", "content": "تو یک دستیار روانشناختی مهربان و فارسی‌زبان هستی..."}]
     for msg in chat_history:
         messages.append(msg)
     messages.append({"role": "user", "content": prompt})
@@ -30,43 +26,28 @@ def ask_gpt(prompt, chat_history):
         model="gpt-4.1",
         messages=messages,
     )
-    reply = response.choices[0].message.content
-    return reply
+    return response.choices[0].message.content
 
-st.markdown("احساست رو بنویس:")
-
-user_input = st.text_input("")
-
-if user_input:
-    st.session_state.chat_history.append({"role": "user", "content": user_input})
-    gpt_reply = ask_gpt(user_input, st.session_state.chat_history)
-    st.session_state.chat_history.append({"role": "assistant", "content": gpt_reply})
-
-    st.markdown(f"🤖 روان‌یار: {gpt_reply}")
-
-    # Show chat history (bottom-up)
+# Show chat history
 for msg in st.session_state.chat_history:
     if msg["role"] == "user":
         st.markdown(f"👤 تو: {msg['content']}")
     elif msg["role"] == "assistant":
         st.markdown(f"🤖 روان‌یار: {msg['content']}")
 
-# Spacer for scrolling layout
+# Divider
 st.markdown("---")
 
-# Input box at the bottom
+# Input box at bottom
 user_input = st.text_input("✍️ پیامت رو بنویس:", key="user_input")
 
 if user_input:
     st.session_state.chat_history.append({"role": "user", "content": user_input})
     gpt_reply = ask_gpt(user_input, st.session_state.chat_history)
     st.session_state.chat_history.append({"role": "assistant", "content": gpt_reply})
+    st.session_state.user_input = ""  # clear input box
 
-    # Clear the input field (optional)
-    st.session_state.user_input = ""
-
-    
-    # Simple check to trigger test manually
+    # Trigger test if relevant
     if any(word in gpt_reply for word in ["تست اضطراب", "تست روانشناسی", "آیا می‌خواهی تست بدهی؟"]):
         st.markdown("### تست اضطراب GAD-7")
 

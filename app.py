@@ -10,7 +10,7 @@ with open("Tests/gad7.json", "r", encoding="utf-8") as f:
 # --- Setup OpenAI ---
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-st.set_page_config(page_title="اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی", layout="right")
+st.set_page_config(page_title="اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی", layout="wide")
 st.title("اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی")
 
 # Initialize session state

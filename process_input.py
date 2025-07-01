@@ -3,7 +3,7 @@ from Conditions import Anxiety, ADHD
 def process_user_input(user_input, step, chat_history):
     """Analyze user input and route to correct condition logic."""
     if step == "start":
-        return anxiety.start_screening(chat_history)
+        return Anxiety.start_screening(chat_history)
     
     anxiety_keywords = ["اضطراب", "بی‌قراری", "تپش قلب", "دل‌درد", "لرزش"]
     adhd_keywords = ["تمرکز", "پرتی حواس", "فراموشی", "بی‌نظمی", "بی‌توجهی"]

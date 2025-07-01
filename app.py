@@ -30,7 +30,7 @@ def ask_gpt(prompt, chat_history):
         model="gpt-4.1",
         messages=messages,
     )
-    reply = response.choices[0].message["content"]
+    reply = response.choices[0].message.content
     return reply
 
 st.markdown("احساست رو بنویس:")

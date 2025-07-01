@@ -1,7 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 import json
-from utils.scorer import score_gad7
+from utils import score_gad7
 
 # Load Persian GAD-7 test
 with open("Tests/gad7.json", "r", encoding="utf-8") as f:
@@ -26,7 +26,7 @@ SYSTEM_PROMPT = (
     "تو یک دستیار روان‌شناسی فارسی‌زبان هستی که مکالمه را به شکل مرحله‌ای هدایت می‌کنی. "
     "در ابتدا از احساس کلی کاربر بپرس، سپس با سؤالات هدفمند علائم را بررسی کن، "
     "در صورت تشخیص نشانه‌های اضطراب یا ADHD، تست مناسب را پیشنهاد بده. "
-    "در هر مرحله فقط یک سؤال بپرس."
+    "در هر مرحله فقط یک سؤال بپرس. سعی کن فقط در حد ۵ جمله یا ۲ پاراگراف پاسخ بدهی، مگر اینکه کاربر صریحاً درخواست توضیح بیشتر کند."
 )
 
 def ask_gpt(prompt, chat_history):

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import streamlit as st
+st.set_page_config(page_title="Test App", layout="centered")
 from openai import OpenAI
 import json
 from Utils.score_gad7 import score_gad7
@@ -12,7 +13,6 @@ with open("Tests/gad7.json", "r", encoding="utf-8") as f:
 # --- Setup OpenAI ---
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-st.set_page_config(page_title="Test App", layout="centered")
 st.title("🧠 روان‌یار - همراه روانی شما با GPT-4")
 
 # Initialize session state

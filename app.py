@@ -39,27 +39,28 @@ for msg in st.session_state.chat_history:
 st.markdown("---")
 
 # Input box at bottom
-user_input = st.text_input("✍️ پیامت رو بنویس:", key="user_input")
+user_input = st.text_input("✍️ پیامت رو بنویس:", key="chat_input")
 
-# Only trigger once per input
+# Only trigger once per message
 if user_input and "just_sent" not in st.session_state:
     st.session_state.chat_history.append({"role": "user", "content": user_input})
     
-    # Add GPT limit here too 👇 (see next section)
     gpt_reply = ask_gpt(user_input, st.session_state.chat_history)
     st.session_state.chat_history.append({"role": "assistant", "content": gpt_reply})
-    
-    st.session_state.just_sent = True  # ✅ avoid infinite loop
-    st.session_state.user_input = ""   # clear input
+
+    # Save GPT reply to session for later use
+    st.session_state.last_gpt_reply = gpt_reply
+    st.session_state.just_sent = True
     st.rerun()
 
-# Reset flag after rerun
+
+# Reset the just_sent flag after rerun
 if "just_sent" in st.session_state:
     del st.session_state["just_sent"]
 
-
-    # Trigger test if relevant
-    if any(word in gpt_reply for word in ["تست اضطراب", "تست روانشناسی", "آیا می‌خواهی تست بدهی؟"]):
+# ✅ NEW: Check GPT reply for test suggestion
+if "last_gpt_reply" in st.session_state:
+    if any(word in st.session_state.last_gpt_reply for word in ["تست اضطراب", "تست روانشناسی", "آیا می‌خواهی تست بدهی؟"]):
         st.markdown("### تست اضطراب GAD-7")
 
         responses = []

@@ -26,7 +26,7 @@ def ask_gpt(prompt, chat_history):
         messages.append(msg)
     messages.append({"role": "user", "content": prompt})
 
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-4.1",
         messages=messages,
     )

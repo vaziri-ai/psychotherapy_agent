@@ -6,11 +6,30 @@ from process_input import process_user_input
 
 # --- Setup ---
 st.set_page_config(page_title="اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی", layout="centered")
-st.title("🧠 اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی")
+st.title("اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی")
 
 # --- OpenAI client ---
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
+# Function to ask GPT-4 with custom system prompt
+SYSTEM_PROMPT = (
+    "تو یک دستیار روان‌شناسی فارسی‌زبان هستی که مکالمه را به شکل مرحله‌ای هدایت می‌کنی. "
+    "در ابتدا از احساس کلی کاربر بپرس، سپس با سؤالات هدفمند علائم را بررسی کن، "
+    "در صورت تشخیص نشانه‌های اضطراب یا ADHD، تست مناسب را پیشنهاد بده. "
+    "در هر مرحله فقط یک سؤال بپرس. سعی کن فقط در حد ۵ جمله یا ۲ پاراگراف پاسخ بدهی، مگر اینکه کاربر صریحاً درخواست توضیح بیشتر کند."
+)
+
+def ask_gpt(prompt, chat_history):
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    for msg in chat_history:
+        messages.append(msg)
+    messages.append({"role": "user", "content": prompt})
+
+    response = client.chat.completions.create(
+        model="gpt-4.1",
+        messages=messages,
+    )
+    return response.choices[0].message.content
 # --- Session State Initialization ---
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = [

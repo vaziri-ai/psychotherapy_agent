@@ -50,6 +50,16 @@ for msg in st.session_state.chat_history:
     elif msg["role"] == "assistant":
         st.markdown(f"هوش مصنوعی روانشناسی: {msg['content']}")
 
+
+# Display all messages in sequence
+for msg in st.session_state.access_chat_history[1:]:  # skip system message
+    if msg["role"] == "user":
+        with st.chat_message("user"):
+            st.markdown(msg["content"])
+    elif msg["role"] == "assistant":
+        with st.chat_message("assistant"):
+            st.markdown(msg["content"])
+
 # Divider
 st.markdown("---")
 

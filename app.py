@@ -17,7 +17,7 @@ if "chat_history" not in st.session_state:
 
 # Function to ask GPT-4 a question
 def ask_gpt(prompt, chat_history):
-    messages = [{"role": "system", "content": "تو یک دستیار روانشناختی مهربان و فارسی‌زبان هستی..."}]
+    messages = [{"role": "system", "content": "تو یک دستیار روانشناختی مهربان و فارسی‌زبان هستی. سعی کن فقط در حد ۵ جمله یا ۲ پاراگراف پاسخ بدهی، مگر اینکه کاربر صریحاً درخواست توضیح بیشتر کند."}]
     for msg in chat_history:
         messages.append(msg)
     messages.append({"role": "user", "content": prompt})
@@ -41,11 +41,23 @@ st.markdown("---")
 # Input box at bottom
 user_input = st.text_input("✍️ پیامت رو بنویس:", key="user_input")
 
-if user_input:
+user_input = st.text_input("✍️ پیامت رو بنویس:", key="user_input")
+
+# Only trigger once per input
+if user_input and "just_sent" not in st.session_state:
     st.session_state.chat_history.append({"role": "user", "content": user_input})
+    
+    # Add GPT limit here too 👇 (see next section)
     gpt_reply = ask_gpt(user_input, st.session_state.chat_history)
     st.session_state.chat_history.append({"role": "assistant", "content": gpt_reply})
-    st.rerun()  # ✅ Clears input and updates chat
+    
+    st.session_state.just_sent = True  # ✅ avoid infinite loop
+    st.session_state.user_input = ""   # clear input
+    st.rerun()
+
+# Reset flag after rerun
+if "just_sent" in st.session_state:
+    del st.session_state["just_sent"]
 
 
     # Trigger test if relevant

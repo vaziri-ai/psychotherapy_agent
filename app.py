@@ -10,11 +10,8 @@ with open("Tests/gad7.json", "r", encoding="utf-8") as f:
 # --- Setup OpenAI ---
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-st.set_page_config(
-    page_title="اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی",
-    layout="centered"
-)
-st.title("اپلیکیشن هوش مصنوعی روانشناسی دکتر موذنی")
+st.set_page_config(page_title="روان‌یار با GPT-4", layout="centered")
+st.title("🧠 روان‌یار - همراه روانی شما با GPT-4")
 
 # Initialize session state
 if "chat_history" not in st.session_state:

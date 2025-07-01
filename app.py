@@ -54,35 +54,36 @@ st.markdown("---")
 # Input box
 user_input = st.text_input("✍️ پیامت رو بنویس:", key="chat_input")
 
+if st.session_state.get("step") != "test_active":
 # Step-based interaction
-if user_input and "just_sent" not in st.session_state:
-    st.session_state.chat_history.append({"role": "user", "content": user_input})
-
-    if st.session_state.step == "start":
-        reply = ask_gpt("کاربر احساس خود را بیان کرده. حالا درباره علائمش سؤال کن.", st.session_state.chat_history)
-        st.session_state.step = "symptom_check"
-
-    elif st.session_state.step == "symptom_check":
-        if any(word in user_input for word in ["دل‌درد", "لرزش", "بی‌قراری", "تپش قلب"]):
-            reply = "ممکنه نشونه‌هایی از اضطراب باشه. دوست داری یک تست علمی کوتاه انجام بدیم؟"
-            st.session_state.step = "test_offer"
+    if user_input and "just_sent" not in st.session_state:
+        st.session_state.chat_history.append({"role": "user", "content": user_input})
+    
+        if st.session_state.step == "start":
+            reply = ask_gpt("کاربر احساس خود را بیان کرده. حالا درباره علائمش سؤال کن.", st.session_state.chat_history)
+            st.session_state.step = "symptom_check"
+    
+        elif st.session_state.step == "symptom_check":
+            if any(word in user_input for word in ["دل‌درد", "لرزش", "بی‌قراری", "تپش قلب"]):
+                reply = "ممکنه نشونه‌هایی از اضطراب باشه. دوست داری یک تست علمی کوتاه انجام بدیم؟"
+                st.session_state.step = "test_offer"
+            else:
+                reply = ask_gpt("از کاربر درباره علائمش بیشتر بپرس.", st.session_state.chat_history)
+    
+        elif st.session_state.step == "test_offer":
+            if any(word in user_input for word in ["بله", "باشه", "اوکی"]):
+                st.session_state.step = "test_active"
+                reply = "بسیار خب، تست اضطراب GAD-7 را شروع می‌کنیم."
+            else:
+                reply = "باشه. اگر نظرت عوض شد، می‌تونی هر زمان بگی تا تست رو انجام بدیم."
+    
         else:
-            reply = ask_gpt("از کاربر درباره علائمش بیشتر بپرس.", st.session_state.chat_history)
-
-    elif st.session_state.step == "test_offer":
-        if any(word in user_input for word in ["بله", "باشه", "اوکی"]):
-            st.session_state.step = "test_active"
-            reply = "بسیار خب، تست اضطراب GAD-7 را شروع می‌کنیم."
-        else:
-            reply = "باشه. اگر نظرت عوض شد، می‌تونی هر زمان بگی تا تست رو انجام بدیم."
-
-    else:
-        reply = ask_gpt(user_input, st.session_state.chat_history)
-
-    st.session_state.chat_history.append({"role": "assistant", "content": reply})
-    st.session_state.last_gpt_reply = reply
-    st.session_state.just_sent = True
-    st.rerun()
+            reply = ask_gpt(user_input, st.session_state.chat_history)
+    
+        st.session_state.chat_history.append({"role": "assistant", "content": reply})
+        st.session_state.last_gpt_reply = reply
+        st.session_state.just_sent = True
+        st.rerun()
 
 # Reset flag
 if "just_sent" in st.session_state:

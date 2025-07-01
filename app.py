@@ -45,7 +45,8 @@ if user_input:
     st.session_state.chat_history.append({"role": "user", "content": user_input})
     gpt_reply = ask_gpt(user_input, st.session_state.chat_history)
     st.session_state.chat_history.append({"role": "assistant", "content": gpt_reply})
-    st.session_state.user_input = ""  # clear input box
+    st.experimental_rerun()  # ✅ Clears input and updates chat
+
 
     # Trigger test if relevant
     if any(word in gpt_reply for word in ["تست اضطراب", "تست روانشناسی", "آیا می‌خواهی تست بدهی؟"]):

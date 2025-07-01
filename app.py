@@ -54,7 +54,12 @@ for msg in st.session_state.chat_history:
 st.markdown("---")
 
 # Input box
-user_input = st.text_input("شکایتت رو بنویس، امروز چه حالی داری؟", key="chat_input")
+user_input = st.text_input(
+    label="شکایتت رو بنویس، امروز چه حالی داری؟",
+    key="chat_input",
+    label_visibility="collapsed",
+    placeholder="پیامت رو اینجا بنویس...",
+)
 
 if st.session_state.get("step") != "test_active":
 # Step-based interaction
@@ -85,6 +90,8 @@ if st.session_state.get("step") != "test_active":
         st.session_state.chat_history.append({"role": "assistant", "content": reply})
         st.session_state.last_gpt_reply = reply
         st.session_state.just_sent = True
+
+        st.session_state["chat_input"] = ""
         st.rerun()
 
 # Reset flag

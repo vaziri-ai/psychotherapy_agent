@@ -3,7 +3,7 @@ from Conditions import Anxiety
 def process_user_input(user_input, step, chat_history):
     """Analyze user input and route to correct condition logic."""
     if step == "start":
-        return anxiety.start_screening(chat_history)
+        return Anxiety.start_screening(chat_history)
     
     if "اضطراب" in user_input or any(word in user_input for word in ["بی‌قراری", "تپش قلب", "دل‌درد"]):
         return Anxiety.handle_input(user_input, chat_history)

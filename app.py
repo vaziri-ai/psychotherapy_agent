@@ -62,7 +62,6 @@ user_input = st.text_input(
 )
 
 if st.session_state.get("step") != "test_active":
-    st.session_state.chat_input = ""
 # Step-based interaction
     if user_input and "just_sent" not in st.session_state:
         st.session_state.chat_history.append({"role": "user", "content": user_input})
